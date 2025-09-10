@@ -1,72 +1,40 @@
+
 import axios from 'axios';
 import { Transaction } from '@/types/transaction';
 
 const API_BASE_URL = 'http://localhost:8000';
 
-// Mock data for development
-const mockTransactions: Transaction[] = [
-  {
-    id: '1',
-    date: '2024-01-15',
-    description: 'Supermercado Disco',
-    amount: -2500,
-    category: 'Alimentación',
-    type: 'expense'
-  },
-  {
-    id: '2', 
-    date: '2024-01-16',
-    description: 'Transferencia recibida',
-    amount: 50000,
-    category: 'Salario',
-    type: 'income'
-  },
-  {
-    id: '3',
-    date: '2024-01-17',
-    description: 'Starbucks',
-    amount: -800,
-    category: 'Entretenimiento',
-    type: 'expense'
-  },
-  {
-    id: '4',
-    date: '2024-01-18',
-    description: 'Farmacia del Ahorro',
-    amount: -1200,
-    category: 'Salud',
-    type: 'expense'
-  },
-  {
-    id: '5',
-    date: '2024-01-19',
-    description: 'Netflix',
-    amount: -999,
-    category: 'Entretenimiento',
-    type: 'expense'
-  },
-  {
-    id: '6',
-    date: '2024-01-20',
-    description: 'Uber',
-    amount: -650,
-    category: 'Transporte',
-    type: 'expense'
-  }
-];
-
+// Obtiene todos los registros desde el backend
 export const fetchTransactions = async (): Promise<Transaction[]> => {
-  try {
-    // Try to fetch from backend first
-    const response = await axios.get(`${API_BASE_URL}/api/transactions`);
-    return response.data;
-  } catch (error) {
-    // Fallback to mock data if backend is not available
-    console.log('Backend no disponible, usando datos mock');
-    return mockTransactions;
-  }
+  const response = await axios.get(`${API_BASE_URL}/registros`);
+  // Adaptar los datos del backend al modelo Transaction del frontend
+  return response.data.map((r: any) => ({
+    id: r.id.toString(),
+    date: r.fecha,
+    description: r.descripcion,
+    amount: r.monto,
+    category: '', // Puedes categorizar en el frontend si lo deseas
+    type: r.monto >= 0 ? 'income' : 'expense',
+  }));
 };
 
+// Agrega un nuevo registro al backend
+export const agregarRegistro = async (fecha: string, monto: number, descripcion: string) => {
+  const response = await axios.post(`${API_BASE_URL}/registros`, {
+    fecha,
+    monto,
+    descripcion,
+  });
+  return response.data;
+};
+
+// Elimina un registro por ID
+export const eliminarRegistro = async (id: number | string) => {
+  const response = await axios.delete(`${API_BASE_URL}/registros/${id}`);
+  return response.data;
+};
+
+// Función para categorizar transacciones (opcional, sigue disponible)
 export const categorizeTransaction = (description: string): string => {
   const categories = {
     'Alimentación': ['supermercado', 'disco', 'carrefour', 'dia', 'coto', 'mcdonalds', 'burger', 'pizza'],

@@ -2,9 +2,22 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 from datetime import date
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+
+# Configuración de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas las URLs. Cambia esto por la URL de tu frontend en producción.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Lo usamosp para simplificar el almacenamiento en memoria
 registros = []
 contador_id = 1
 

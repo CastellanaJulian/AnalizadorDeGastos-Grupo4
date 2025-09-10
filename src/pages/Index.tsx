@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Transaction } from '@/types/transaction';
 import { fetchTransactions } from '@/services/transactionService';
 import { TransactionTable } from '@/components/TransactionTable';
+import FormularioMovimiento from '@/components/FormularioMovimiento';
 import { ExpenseSummary } from '@/components/ExpenseSummary';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -74,9 +75,18 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-8">
+          {/* Formulario para agregar movimientos */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Agregar nuevo movimiento</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <FormularioMovimiento onAgregado={loadTransactions} />
+            </CardContent>
+          </Card>
+
           {/* Quick Stats */}
           <ExpenseSummary transactions={transactions} />
-
           <Separator />
 
           {/* Transactions */}
